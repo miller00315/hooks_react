@@ -1,8 +1,8 @@
 import P from 'prop-types';
 import './App.css';
-import React, {useState, useCallback} from 'react';
+import {useState, useCallback, useMemo} from 'react';
 
-const Button = React.memo(({onClick}) => <button onClick={() => onClick(10)}>+</button>);
+const Button = ({onClick}) => <button onClick={() => onClick(10)}>+</button>;
 
 Button.protoTypes = {
   onClick: P.func,
@@ -15,11 +15,13 @@ function App() {
     setCounter((oldCounter) => oldCounter + num);
   }, []);
 
+  const btn = useMemo(() => <Button onClick={incrementCounter} />, [incrementCounter]);
+
   return (
     <div className="App">
       <p>Teste 3</p>
       <h1>C1: {counter}</h1>
-      <Button onClick={incrementCounter} />
+      {btn}
     </div>
   );
 }
