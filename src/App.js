@@ -1,27 +1,51 @@
 import P from 'prop-types';
+import { useEffect, useMemo, useState } from 'react';
 import './App.css';
-import {useState, useCallback, useMemo} from 'react';
 
-const Button = ({onClick}) => <button onClick={() => onClick(10)}>+</button>;
+const Post = ({ post }) =>  (
+    <div key={post.id} className="post">
+      <h1>{post.title}</h1>
+      <p>{post.body}</p>
+    </div>
+  );
 
-Button.protoTypes = {
-  onClick: P.func,
-}
+Post.propTypes = {
+  post: P.shape({
+    id: P.number,
+    title: P.string,
+    body: P.string,
+  }),
+};
 
 function App() {
-  const [counter, setCounter] = useState(0);
+  const [posts, setPosts] = useState([]);
+  const [value, setValue] = useState('');
 
-  const incrementCounter = useCallback((num) => {
-    setCounter((oldCounter) => oldCounter + num);
+  console.log('Pai renderizou!');
+
+  // Component did mount
+  useEffect(() => {
+    setTimeout(function () {
+      fetch('https://jsonplaceholder.typicode.com/posts')
+        .then((r) => r.json())
+        .then((r) => setPosts(r));
+    }, 5000);
   }, []);
-
-  const btn = useMemo(() => <Button onClick={incrementCounter} />, [incrementCounter]);
 
   return (
     <div className="App">
-      <p>Teste 3</p>
-      <h1>C1: {counter}</h1>
-      {btn}
+      <p>
+        <input
+          type="search"
+          value={value}
+          onChange={(e) => setValue(e.target.value)}
+        />
+      </p>
+      {useMemo(() => (
+          posts.length > 0 &&
+          posts.map((post) => <Post key={post.id} post={post} />))
+      , [posts])}
+      {posts.length <= 0 && <p>Ainda não existem posts.</p>}
     </div>
   );
 }
