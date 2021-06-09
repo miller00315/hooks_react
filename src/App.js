@@ -23,11 +23,16 @@ function App() {
   const [value, setValue] = useState('');
 
   const inputRef = useRef(null);
+  const counter = useRef(0);
 
   useEffect(() => 
       fetch('https://jsonplaceholder.typicode.com/posts')
         .then((r) => r.json())
         .then((r) => setPosts(r)), []);
+
+  useEffect(()=> {
+    counter.current++;
+  });
 
   useEffect(() => {
     inputRef.current.focus();
@@ -39,6 +44,7 @@ function App() {
 
   return (
     <div className="App">
+      <h6>Rendered: {counter.current}</h6>
       <p>
         <input
           ref={inputRef}
